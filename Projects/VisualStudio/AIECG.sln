@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Intro to OpenGL", "Intro to OpenGL\Intro to OpenGL.vcxproj", "{4CFB3160-028A-42A5-995B-F8C0BFD9D8D7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AIECG", "AIECG.vcxproj", "{4CFB3160-028A-42A5-995B-F8C0BFD9D8D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
