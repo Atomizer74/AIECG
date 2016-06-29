@@ -19,13 +19,20 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Application.cpp" />
+    <ClCompile Include="..\..\Source\Camera.cpp" />
     <ClCompile Include="..\..\Source\Gizmos.cpp" />
     <ClCompile Include="..\..\Source\gl_core_4_4.c" />
     <ClCompile Include="..\..\Source\Main.cpp" />
+    <ClCompile Include="..\..\Source\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Application.h" />
+    <ClInclude Include="..\..\Source\Camera.h" />
     <ClInclude Include="..\..\Source\Gizmos.h" />
     <ClInclude Include="..\..\Source\gl_core_4_4.h" />
+    <ClInclude Include="..\..\Source\Scene.h" />
+    <ClInclude Include="..\..\Source\TestScene.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4CFB3160-028A-42A5-995B-F8C0BFD9D8D7}</ProjectGuid>
