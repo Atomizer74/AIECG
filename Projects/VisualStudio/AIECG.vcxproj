@@ -23,7 +23,12 @@
     <ClCompile Include="..\..\Source\Camera.cpp" />
     <ClCompile Include="..\..\Source\Gizmos.cpp" />
     <ClCompile Include="..\..\Source\gl_core_4_4.c" />
+    <ClCompile Include="..\..\Source\GL_Program.cpp" />
+    <ClCompile Include="..\..\Source\GL_Uniform.cpp" />
     <ClCompile Include="..\..\Source\Main.cpp" />
+    <ClCompile Include="..\..\Source\GL_Shader.cpp" />
+    <ClCompile Include="..\..\Source\Mesh.cpp" />
+    <ClCompile Include="..\..\Source\OBJScene.cpp" />
     <ClCompile Include="..\..\Source\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -31,8 +36,14 @@
     <ClInclude Include="..\..\Source\Camera.h" />
     <ClInclude Include="..\..\Source\Gizmos.h" />
     <ClInclude Include="..\..\Source\gl_core_4_4.h" />
+    <ClInclude Include="..\..\Source\GL_Program.h" />
+    <ClInclude Include="..\..\Source\GL_Shader.h" />
+    <ClInclude Include="..\..\Source\GL_Uniform.h" />
+    <ClInclude Include="..\..\Source\Mesh.h" />
+    <ClInclude Include="..\..\Source\OBJScene.h" />
     <ClInclude Include="..\..\Source\Scene.h" />
     <ClInclude Include="..\..\Source\TestScene.h" />
+    <ClInclude Include="..\..\Source\tiny_obj_loader.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4CFB3160-028A-42A5-995B-F8C0BFD9D8D7}</ProjectGuid>
@@ -106,7 +117,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\stb-master;$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,7 +148,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\stb-master;$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
