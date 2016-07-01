@@ -21,23 +21,26 @@ OBJScene::~OBJScene()
 
 bool OBJScene::Init()
 {
+	// Set our timer
+	_time = 0.0f;
+
 	// Setup Gizmos
 	Gizmos::create();
 
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	//_camera = new Camera(glm::pi<float>() * 0.25f, 1280.0f / 720.0f, 0.1f, 1000.0f);
 	_camera = new FlyCamera();
-	_camera->LookAt(glm::vec3(10.0f), glm::vec3(0.0f));
+	_camera->LookAt(glm::vec3(20, 20, 20), glm::vec3(0.0f));
 
 
 	// Set up our shaders
 	_program = new GL::Program();
 
-	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertTest.txt");
-	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragTest.txt");
+	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertOBJ.txt");
+	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragOBJ.txt");
 
 	_program->AddShader(vertShader);
 	_program->AddShader(fragShader);
@@ -47,7 +50,7 @@ bool OBJScene::Init()
 
 	// Setup mesh
 	_mesh = new Mesh();
-	if (_mesh->loadObj("models/bunny.obj") == false)
+	if (_mesh->loadObj("models/soulspear/soulspear.obj", true, true) == false)
 	{
 		return false;
 	}
@@ -93,6 +96,9 @@ bool OBJScene::Update(float deltaTime)
 						i == 10 ? white : black);
 	}
 
+	// Update our timer
+	_time += deltaTime;
+
 	return true;
 }
 
@@ -109,6 +115,7 @@ void OBJScene::Render(float deltaTime)
 	// Set up our program
 	_program->Use();
 	GL::Uniform::Set("projectionViewWorldMatrix", pvw);
+	GL::Uniform::Set("time", _time);
 
 	// Draw mesh
 	_mesh->draw(GL_TRIANGLES);

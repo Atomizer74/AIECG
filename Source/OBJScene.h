@@ -25,6 +25,8 @@ public:
 	virtual void Deactivate();
 
 protected:
+	float _time;
+
 	Camera* _camera;
 
 	GL::Program* _program;

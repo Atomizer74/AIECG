@@ -1,0 +1,18 @@
+#version 410
+
+in vec4 vColour;
+in vec2 vTexCoord;
+
+uniform sampler2D diffuseTexture;
+uniform sampler2D normalTexture;
+uniform float time;
+
+out vec4 fragColour;
+
+void main()
+{
+  vec4 texColour = texture(diffuseTexture, vTexCoord);
+  //fragColour = mix(vColour, texColour, 0.5);
+  //fragColour = vColour;
+  fragColour = texColour;
+}

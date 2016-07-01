@@ -6,9 +6,10 @@
 #include "Gizmos.h"
 #include "GL_Uniform.h"
 
-TestScene::TestScene() : _program(nullptr)
-{
 
+TestScene::TestScene() : _program(nullptr), _camera(nullptr)
+{
+	
 }
 
 TestScene::~TestScene()
@@ -36,15 +37,16 @@ bool TestScene::Init()
 	{
 		glm::vec4	position;
 		glm::vec4	colour;
+		glm::vec2	texCoord;
 	};
 
 	// Our vertex list
 	Vertex vertices[4]
 	{
-		{ glm::vec4(-5, 0, -5, 1), glm::vec4(1, 0, 0, 1) },
-		{ glm::vec4( 5, 0, -5, 1), glm::vec4(0, 0, 1, 1) },
-		{ glm::vec4(-5, 0,  5, 1), glm::vec4(0, 1, 0, 1) },
-		{ glm::vec4( 5, 0,  5, 1), glm::vec4(1, 1, 1, 1) }
+		{ glm::vec4(-5, 0, -5, 1), glm::vec4(1, 0, 0, 1), glm::vec2(0, 0) },
+		{ glm::vec4( 5, 0, -5, 1), glm::vec4(0, 0, 1, 1), glm::vec2(1, 0) },
+		{ glm::vec4(-5, 0,  5, 1), glm::vec4(0, 1, 0, 1), glm::vec2(0, 1) },
+		{ glm::vec4( 5, 0,  5, 1), glm::vec4(1, 1, 1, 1), glm::vec2(1, 1) }
 	};
 
 	// Indices for 2 triangles
@@ -79,20 +81,41 @@ bool TestScene::Init()
 	// Tell GL the structure of our array buffer(_vbo)
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)sizeof(Vertex::position));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position) + sizeof(Vertex::colour)));
 
 	// Unbind our vertex array so that no further attempts to change a vertex array wont affect _vao
 	glBindVertexArray(0);
 
 	// Set up our shaders
-	_program = GL::Program::DefaultProgram();
+	_program = new GL::Program();
+
+	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertTest.txt");
+	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragTest.txt");
+
+	_program->AddShader(vertShader);
+	_program->AddShader(fragShader);
+	_program->Link();
+
+	// Load our texture
+	Image diffuse("textures/dirt_diffuse.png");
+	Image normal("textures/dirt_normal.png");
+
+	// Upload texture to GL
+	_texDiffuse = diffuse.Upload();
+	_texNormal = normal.Upload();
 
 	return true;
 }
 
 void TestScene::Shutdown()
 {
+	// Cleanup textures
+	glDeleteTextures(1, &_texDiffuse);
+	glDeleteTextures(1, &_texNormal);
+
 	// Cleanup the buffers and array
 	glDeleteBuffers(1, &_vbo);
 	glDeleteBuffers(1, &_ibo);
@@ -114,7 +137,7 @@ bool TestScene::Update(float deltaTime)
 
 	Gizmos::addTransform(glm::mat4(1));
 	
-	glm::vec4 white(1);
+	/*glm::vec4 white(1);
 	glm::vec4 black(0, 0, 0, 1);
 
 	for (int i = 0; i < 21; i++)
@@ -125,7 +148,7 @@ bool TestScene::Update(float deltaTime)
 		Gizmos::addLine(glm::vec3(10, 0, -10 + i),
 						glm::vec3(-10, 0, -10 + i),
 						i == 10 ? white : black);
-	}
+	}*/
 
 	return true;
 }
@@ -143,12 +166,26 @@ void TestScene::Render(float deltaTime)
 	// Set up our program
 	_program->Use();
 	GL::Uniform::Set("projectionViewWorldMatrix", pvw);
+	GL::Uniform::Set("diffuse", 0);
+	GL::Uniform::Set("normal", 1);
 
 	// Re-bind our vertex array object that we set up previously
 	glBindVertexArray(_vao);
 
+	// Re-bind the textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _texDiffuse);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, _texNormal);
+
 	// Tell it what to draw from our bound buffers
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	// Unbind the textures
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Unbind out vertex array object so that other code doesn't accidently change our _vao
 	glBindVertexArray(0);

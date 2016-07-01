@@ -29,6 +29,7 @@
     <ClCompile Include="..\..\Source\GL_Shader.cpp" />
     <ClCompile Include="..\..\Source\Mesh.cpp" />
     <ClCompile Include="..\..\Source\OBJScene.cpp" />
+    <ClCompile Include="..\..\Source\SP3Scene.cpp" />
     <ClCompile Include="..\..\Source\TestScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -42,6 +43,7 @@
     <ClInclude Include="..\..\Source\Mesh.h" />
     <ClInclude Include="..\..\Source\OBJScene.h" />
     <ClInclude Include="..\..\Source\Scene.h" />
+    <ClInclude Include="..\..\Source\SP3Scene.h" />
     <ClInclude Include="..\..\Source\TestScene.h" />
     <ClInclude Include="..\..\Source\tiny_obj_loader.h" />
   </ItemGroup>

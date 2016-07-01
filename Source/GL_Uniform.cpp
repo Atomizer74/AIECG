@@ -15,6 +15,18 @@ namespace GL
 		return (uniLoc != -1);
 	}
 
+	void Uniform::Set(const char* szName, int value)
+	{
+		GLint id;
+		glGetIntegerv(GL_CURRENT_PROGRAM, &id);
+		GLint uniLoc = glGetUniformLocation(id, szName);
+
+		if (uniLoc == -1)
+			return;
+
+		glUniform1i(uniLoc, value);
+	}
+
 	void Uniform::Set(const char* szName, float value)
 	{
 		GLint id;

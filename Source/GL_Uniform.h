@@ -17,6 +17,7 @@ namespace GL
 
 		static bool Exists(const char* szName);
 
+		static void Set(const char* szName, int value);
 		static void Set(const char* szName, float value);
 		static void Set(const char* szName, double value);
 		static void Set(const char* szName, const glm::vec2& value);
