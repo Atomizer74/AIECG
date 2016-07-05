@@ -10,6 +10,7 @@ public:
 	virtual bool Init() = 0;
 	virtual void Shutdown() = 0;
 
+	virtual void OnGUI(float deltaTime) {}
 	virtual bool Update(float deltaTime) { return true; }
 	virtual void Render(float deltaTime) {}
 

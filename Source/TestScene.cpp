@@ -21,9 +21,6 @@ TestScene::~TestScene()
 
 bool TestScene::Init()
 {
-	// Setup Gizmos
-	Gizmos::create();
-
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -38,15 +35,16 @@ bool TestScene::Init()
 		glm::vec4	position;
 		glm::vec4	colour;
 		glm::vec2	texCoord;
+		glm::vec4	normal;
 	};
 
 	// Our vertex list
 	Vertex vertices[4]
 	{
-		{ glm::vec4(-5, 0, -5, 1), glm::vec4(1, 0, 0, 1), glm::vec2(0, 0) },
-		{ glm::vec4( 5, 0, -5, 1), glm::vec4(0, 0, 1, 1), glm::vec2(1, 0) },
-		{ glm::vec4(-5, 0,  5, 1), glm::vec4(0, 1, 0, 1), glm::vec2(0, 1) },
-		{ glm::vec4( 5, 0,  5, 1), glm::vec4(1, 1, 1, 1), glm::vec2(1, 1) }
+		{ glm::vec4(-5, 0, -5, 1), glm::vec4(1, 0, 0, 1), glm::vec2(0, 0), glm::vec4(0, 1, 0, 0) },
+		{ glm::vec4( 5, 0, -5, 1), glm::vec4(0, 0, 1, 1), glm::vec2(1, 0), glm::vec4(0, 1, 0, 0) },
+		{ glm::vec4(-5, 0,  5, 1), glm::vec4(0, 1, 0, 1), glm::vec2(0, 1), glm::vec4(0, 1, 0, 0) },
+		{ glm::vec4( 5, 0,  5, 1), glm::vec4(1, 1, 1, 1), glm::vec2(1, 1), glm::vec4(0, 1, 0, 0) }
 	};
 
 	// Indices for 2 triangles
@@ -82,9 +80,11 @@ bool TestScene::Init()
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)sizeof(Vertex::position));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position) + sizeof(Vertex::colour)));
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position) + sizeof(Vertex::colour) + sizeof(Vertex::texCoord)));
 
 	// Unbind our vertex array so that no further attempts to change a vertex array wont affect _vao
 	glBindVertexArray(0);
@@ -92,15 +92,15 @@ bool TestScene::Init()
 	// Set up our shaders
 	_program = new GL::Program();
 
-	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertTest.txt");
-	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragTest.txt");
+	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertTest.glsl");
+	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragTest.glsl");
 
 	_program->AddShader(vertShader);
 	_program->AddShader(fragShader);
 	_program->Link();
 
 	// Load our texture
-	Image diffuse("textures/dirt_diffuse.png");
+	Image diffuse("textures/crate.png");
 	Image normal("textures/dirt_normal.png");
 
 	// Upload texture to GL
@@ -116,6 +116,10 @@ void TestScene::Shutdown()
 	glDeleteTextures(1, &_texDiffuse);
 	glDeleteTextures(1, &_texNormal);
 
+	// Cleanup shader program
+	delete _program;
+	_program = nullptr;
+
 	// Cleanup the buffers and array
 	glDeleteBuffers(1, &_vbo);
 	glDeleteBuffers(1, &_ibo);
@@ -123,9 +127,6 @@ void TestScene::Shutdown()
 
 	delete _camera;
 	_camera = nullptr;
-
-	// Destroy Gizmos
-	Gizmos::destroy();
 }
 
 
@@ -134,8 +135,16 @@ bool TestScene::Update(float deltaTime)
 	_camera->Update(deltaTime);
 
 	Gizmos::clear();
-
 	Gizmos::addTransform(glm::mat4(1));
+
+	static float time = 0;
+	time += deltaTime;
+	_lightDirection.x = sinf(time);
+	_lightDirection.y = cosf(time);
+	_lightDirection.z = 0;
+
+	// Draw light vector
+	Gizmos::addLine(glm::vec3(0), _lightDirection * 3, glm::vec4(1,1,0,1));
 	
 	/*glm::vec4 white(1);
 	glm::vec4 black(0, 0, 0, 1);
@@ -168,6 +177,7 @@ void TestScene::Render(float deltaTime)
 	GL::Uniform::Set("projectionViewWorldMatrix", pvw);
 	GL::Uniform::Set("diffuse", 0);
 	GL::Uniform::Set("normal", 1);
+	GL::Uniform::Set("lightDirection", _lightDirection);
 
 	// Re-bind our vertex array object that we set up previously
 	glBindVertexArray(_vao);

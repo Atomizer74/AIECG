@@ -24,9 +24,6 @@ bool OBJScene::Init()
 	// Set our timer
 	_time = 0.0f;
 
-	// Setup Gizmos
-	Gizmos::create();
-
 	glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
@@ -39,8 +36,8 @@ bool OBJScene::Init()
 	// Set up our shaders
 	_program = new GL::Program();
 
-	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertOBJ.txt");
-	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragOBJ.txt");
+	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertOBJ.glsl");
+	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragOBJ.glsl");
 
 	_program->AddShader(vertShader);
 	_program->AddShader(fragShader);
@@ -50,10 +47,13 @@ bool OBJScene::Init()
 
 	// Setup mesh
 	_mesh = new Mesh();
-	if (_mesh->loadObj("models/soulspear/soulspear.obj", true, true) == false)
+	if (_mesh->loadObj("models/dragon.obj", true, false) == false)
 	{
 		return false;
 	}
+
+	_ambientLight = glm::vec3(0.25f);
+	_light.colour = glm::vec3(1, 1, 1);
 
 	return true;
 }
@@ -69,9 +69,6 @@ void OBJScene::Shutdown()
 
 	delete _camera;
 	_camera = nullptr;
-
-	// Destroy Gizmos
-	Gizmos::destroy();
 }
 
 
@@ -80,7 +77,6 @@ bool OBJScene::Update(float deltaTime)
 	_camera->Update(deltaTime);
 
 	Gizmos::clear();
-
 	Gizmos::addTransform(glm::mat4(1));
 
 	glm::vec4 white(1);
@@ -99,6 +95,13 @@ bool OBJScene::Update(float deltaTime)
 	// Update our timer
 	_time += deltaTime;
 
+	_light.position.z = sinf(_time) * 7;
+	_light.position.x = cosf(_time) * 7;
+	_light.position.y = 5;
+
+	// Draw light vector
+	Gizmos::addSphere(_light.position, 0.5f, 8, 8, glm::vec4(1, 1, 0, 1));
+
 	return true;
 }
 
@@ -109,13 +112,19 @@ void OBJScene::Render(float deltaTime)
 
 	Gizmos::draw(_camera->GetProjectionView());
 
-	glm::mat4 worldMatrix(1);
+	glm::mat4 worldMatrix = glm::scale(glm::vec3(1.0f));
 	glm::mat4 pvw = _camera->GetProjectionView() * worldMatrix;
 
 	// Set up our program
 	_program->Use();
+	GL::Uniform::Set("cameraPosition", _camera->GetTransform()[3]);
 	GL::Uniform::Set("projectionViewWorldMatrix", pvw);
+	GL::Uniform::Set("worldMatrix", worldMatrix);
 	GL::Uniform::Set("time", _time);
+
+	GL::Uniform::Set("light.position", _light.position);
+	GL::Uniform::Set("light.colour", _light.colour);
+	GL::Uniform::Set("ambientLight", _ambientLight);
 
 	// Draw mesh
 	_mesh->draw(GL_TRIANGLES);

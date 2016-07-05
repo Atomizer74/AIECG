@@ -39,6 +39,10 @@ void FlyCamera::Update(float deltaTime)
 
 	float frameSpeed = _speed * deltaTime;
 
+	// Increased move speed
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		frameSpeed = (_speed * 5) * deltaTime;
+
 	// Movement
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		_transform[3] -= _transform[2] * frameSpeed;

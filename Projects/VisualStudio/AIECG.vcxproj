@@ -19,33 +19,64 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Libraries\imgui-master\imgui.cpp" />
+    <ClCompile Include="..\..\Libraries\imgui-master\imgui_draw.cpp" />
     <ClCompile Include="..\..\Source\Application.cpp" />
+    <ClCompile Include="..\..\Source\BlockScene.cpp" />
     <ClCompile Include="..\..\Source\Camera.cpp" />
+    <ClCompile Include="..\..\Source\Error.cpp" />
     <ClCompile Include="..\..\Source\Gizmos.cpp" />
     <ClCompile Include="..\..\Source\gl_core_4_4.c" />
     <ClCompile Include="..\..\Source\GL_Program.cpp" />
     <ClCompile Include="..\..\Source\GL_Uniform.cpp" />
+    <ClCompile Include="..\..\Source\Image.cpp" />
+    <ClCompile Include="..\..\Source\imgui_impl_glfw_gl3.cpp" />
     <ClCompile Include="..\..\Source\Main.cpp" />
     <ClCompile Include="..\..\Source\GL_Shader.cpp" />
     <ClCompile Include="..\..\Source\Mesh.cpp" />
     <ClCompile Include="..\..\Source\OBJScene.cpp" />
+    <ClCompile Include="..\..\Source\Profiler.cpp" />
     <ClCompile Include="..\..\Source\SP3Scene.cpp" />
+    <ClCompile Include="..\..\Source\SP6Scene.cpp" />
     <ClCompile Include="..\..\Source\TestScene.cpp" />
+    <ClCompile Include="..\..\Source\TextureAtlas.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Libraries\imgui-master\imconfig.h" />
+    <ClInclude Include="..\..\Libraries\imgui-master\imgui.h" />
+    <ClInclude Include="..\..\Libraries\imgui-master\imgui_internal.h" />
     <ClInclude Include="..\..\Source\Application.h" />
+    <ClInclude Include="..\..\Source\BlockScene.h" />
     <ClInclude Include="..\..\Source\Camera.h" />
+    <ClInclude Include="..\..\Source\Error.h" />
     <ClInclude Include="..\..\Source\Gizmos.h" />
     <ClInclude Include="..\..\Source\gl_core_4_4.h" />
     <ClInclude Include="..\..\Source\GL_Program.h" />
     <ClInclude Include="..\..\Source\GL_Shader.h" />
     <ClInclude Include="..\..\Source\GL_Uniform.h" />
+    <ClInclude Include="..\..\Source\Image.h" />
+    <ClInclude Include="..\..\Source\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="..\..\Source\Mesh.h" />
     <ClInclude Include="..\..\Source\OBJScene.h" />
+    <ClInclude Include="..\..\Source\Profiler.h" />
     <ClInclude Include="..\..\Source\Scene.h" />
     <ClInclude Include="..\..\Source\SP3Scene.h" />
+    <ClInclude Include="..\..\Source\SP6Scene.h" />
     <ClInclude Include="..\..\Source\TestScene.h" />
+    <ClInclude Include="..\..\Source\TextureAtlas.h" />
     <ClInclude Include="..\..\Source\tiny_obj_loader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Build\shaders\fragBlock.glsl" />
+    <None Include="..\..\Build\shaders\fragOBJ.glsl" />
+    <None Include="..\..\Build\shaders\fragSP3.glsl" />
+    <None Include="..\..\Build\shaders\fragSP6.glsl" />
+    <None Include="..\..\Build\shaders\fragTest.glsl" />
+    <None Include="..\..\Build\shaders\vertBlock.glsl" />
+    <None Include="..\..\Build\shaders\vertOBJ.glsl" />
+    <None Include="..\..\Build\shaders\vertSP3.glsl" />
+    <None Include="..\..\Build\shaders\vertSP6.glsl" />
+    <None Include="..\..\Build\shaders\vertTest.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4CFB3160-028A-42A5-995B-F8C0BFD9D8D7}</ProjectGuid>
@@ -119,7 +150,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\stb-master;$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\imgui-master;$(SolutionDir)..\..\Libraries\stb-master;$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,14 +182,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\stb-master;$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\imgui-master;$(SolutionDir)..\..\Libraries\stb-master;$(SolutionDir)..\..\Libraries\glm;$(SolutionDir)..\..\Libraries\glfw\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)..\..\Libraries\glfw\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

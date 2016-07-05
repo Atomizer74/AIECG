@@ -121,8 +121,8 @@ bool SP3Scene::Init()
 	// Set up our shaders
 	_program = new GL::Program();
 
-	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertSP3.txt");
-	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragSP3.txt");
+	GL::Shader vertShader(GL::ShaderType::VERTEX_SHADER, "./shaders/vertSP3.glsl");
+	GL::Shader fragShader(GL::ShaderType::FRAGMENT_SHADER, "./shaders/fragSP3.glsl");
 
 	_program->AddShader(vertShader);
 	_program->AddShader(fragShader);

@@ -20,7 +20,7 @@ namespace GL
 		GLint id;
 		glGetIntegerv(GL_CURRENT_PROGRAM, &id);
 		GLint uniLoc = glGetUniformLocation(id, szName);
-
+		
 		if (uniLoc == -1)
 			return;
 
