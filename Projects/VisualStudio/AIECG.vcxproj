@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\Source\Application.cpp" />
     <ClCompile Include="..\..\Source\BlockScene.cpp" />
     <ClCompile Include="..\..\Source\Camera.cpp" />
+    <ClCompile Include="..\..\Source\EmptyScene.cpp" />
     <ClCompile Include="..\..\Source\Error.cpp" />
     <ClCompile Include="..\..\Source\Gizmos.cpp" />
     <ClCompile Include="..\..\Source\gl_core_4_4.c" />
@@ -35,7 +36,10 @@
     <ClCompile Include="..\..\Source\GL_Shader.cpp" />
     <ClCompile Include="..\..\Source\Mesh.cpp" />
     <ClCompile Include="..\..\Source\OBJScene.cpp" />
+    <ClCompile Include="..\..\Source\ParticleScene.cpp" />
+    <ClCompile Include="..\..\Source\ParticleSystem.cpp" />
     <ClCompile Include="..\..\Source\Profiler.cpp" />
+    <ClCompile Include="..\..\Source\QuatScene.cpp" />
     <ClCompile Include="..\..\Source\SP3Scene.cpp" />
     <ClCompile Include="..\..\Source\SP6Scene.cpp" />
     <ClCompile Include="..\..\Source\TestScene.cpp" />
@@ -46,8 +50,10 @@
     <ClInclude Include="..\..\Libraries\imgui-master\imgui.h" />
     <ClInclude Include="..\..\Libraries\imgui-master\imgui_internal.h" />
     <ClInclude Include="..\..\Source\Application.h" />
+    <ClInclude Include="..\..\Source\Bezier.h" />
     <ClInclude Include="..\..\Source\BlockScene.h" />
     <ClInclude Include="..\..\Source\Camera.h" />
+    <ClInclude Include="..\..\Source\EmptyScene.h" />
     <ClInclude Include="..\..\Source\Error.h" />
     <ClInclude Include="..\..\Source\Gizmos.h" />
     <ClInclude Include="..\..\Source\gl_core_4_4.h" />
@@ -58,7 +64,10 @@
     <ClInclude Include="..\..\Source\imgui_impl_glfw_gl3.h" />
     <ClInclude Include="..\..\Source\Mesh.h" />
     <ClInclude Include="..\..\Source\OBJScene.h" />
+    <ClInclude Include="..\..\Source\ParticleScene.h" />
+    <ClInclude Include="..\..\Source\ParticleSystem.h" />
     <ClInclude Include="..\..\Source\Profiler.h" />
+    <ClInclude Include="..\..\Source\QuatScene.h" />
     <ClInclude Include="..\..\Source\Scene.h" />
     <ClInclude Include="..\..\Source\SP3Scene.h" />
     <ClInclude Include="..\..\Source\SP6Scene.h" />
@@ -69,11 +78,13 @@
   <ItemGroup>
     <None Include="..\..\Build\shaders\fragBlock.glsl" />
     <None Include="..\..\Build\shaders\fragOBJ.glsl" />
+    <None Include="..\..\Build\shaders\fragParticle.glsl" />
     <None Include="..\..\Build\shaders\fragSP3.glsl" />
     <None Include="..\..\Build\shaders\fragSP6.glsl" />
     <None Include="..\..\Build\shaders\fragTest.glsl" />
     <None Include="..\..\Build\shaders\vertBlock.glsl" />
     <None Include="..\..\Build\shaders\vertOBJ.glsl" />
+    <None Include="..\..\Build\shaders\vertParticle.glsl" />
     <None Include="..\..\Build\shaders\vertSP3.glsl" />
     <None Include="..\..\Build\shaders\vertSP6.glsl" />
     <None Include="..\..\Build\shaders\vertTest.glsl" />

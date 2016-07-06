@@ -84,6 +84,18 @@
     <ClCompile Include="..\..\Source\Error.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ParticleScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\QuatScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\EmptyScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Gizmos.h">
@@ -155,6 +167,21 @@
     <ClInclude Include="..\..\Source\Error.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\ParticleSystem.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ParticleScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\QuatScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\EmptyScene.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Bezier.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Build\shaders\fragOBJ.glsl">
@@ -185,6 +212,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\Build\shaders\fragBlock.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\shaders\fragParticle.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Build\shaders\vertParticle.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

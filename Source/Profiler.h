@@ -82,7 +82,7 @@ class ProfileNode
 		_min = (time < _min) ? time : _min;
 		_max = (time > _max) ? time : _max;
 
-		if (_frameTimes.size() >= FRAMETIMES_MAXCOUNT)
+		if ((int)_frameTimes.size() >= FRAMETIMES_MAXCOUNT)
 			_frameTimes.pop();
 	}
 

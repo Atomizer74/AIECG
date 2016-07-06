@@ -12,7 +12,7 @@ Description: The idea of this class is to combine individual smaller textures in
 class TextureAtlas
 {
 	// Extra pixel buffer around every texture in the atlas
-	const int BUFFERSIZE = 256;
+	const int BUFFERSIZE = 128;
 
 	// The number of textures on each dimension(_texCount x _texCount)
 	int _texCount;

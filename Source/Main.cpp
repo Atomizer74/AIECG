@@ -5,6 +5,8 @@
 #include "SP3Scene.h"
 #include "SP6Scene.h"
 #include "BlockScene.h"
+#include "ParticleScene.h"
+#include "QuatScene.h"
 
 int main(int argc, char* argv[])
 {
@@ -14,8 +16,11 @@ int main(int argc, char* argv[])
 	//app.AddScene("OBJ", new OBJScene());
 	//app.AddScene("SP3", new SP3Scene());
 	//app.AddScene("SP6", new SP6::SP6Scene());
-	app.AddScene("Block", new Block::BlockScene());
-	app.SetActiveScene("Block");
+	//app.AddScene("Block", new Block::BlockScene());
+	//app.AddScene("Particle", new ParticleScene());
+	app.AddScene("Quat", new QuatScene());
+
+	app.SetActiveScene("Quat");
 
 	if (app.Init())
 	{

@@ -34,6 +34,8 @@ bool Application::Init()
 		return false;
 
 	// Create the main window
+	// Multisampling
+	glfwWindowHint(GLFW_SAMPLES, 8);
 	_window = glfwCreateWindow(1280, 720, "AIE Computer Graphics", nullptr, nullptr);
 	if (_window == nullptr)
 	{
@@ -123,14 +125,17 @@ void Application::Run()
 
 		// Profiling information
 		auto profiles = Profile::ProfileData();
-		if (ImGui::Begin("Profiler"))
+		if (profiles.size() != 0)
 		{
-			for each (auto profile in profiles)
+			if (ImGui::Begin("Profiler"))
 			{
-				// TODO: Convert to appropriate measurement
-				ImGui::Text("%s[%fms-%fms]: %fms", profile.name.c_str(), (profile.min.count() / 1000000.0f), (profile.max.count() / 1000000.0f), (profile.total.count() / profile.runCount) / 1000000.0f);
+				for each (auto profile in profiles)
+				{
+					// TODO: Convert to appropriate measurement
+					ImGui::Text("%s[%fms-%fms]: %fms", profile.name.c_str(), (profile.min.count() / 1000000.0f), (profile.max.count() / 1000000.0f), (profile.total.count() / profile.runCount) / 1000000.0f);
+				}
+				ImGui::End();
 			}
-			ImGui::End();
 		}
 
 		// IMGUI Render

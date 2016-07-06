@@ -52,6 +52,7 @@ namespace Block
 		glClearColor(0.3f, 0.4f, 0.8f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
+		glEnable(GL_MULTISAMPLE);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Enable wireframe mode
 
 		// Setup the camera
@@ -195,6 +196,7 @@ namespace Block
 
 	}
 
+#pragma region BLOCKWORLDSTUFF
 
 	const float blockSize = 1.0f;
 
@@ -308,6 +310,7 @@ namespace Block
 
 						unsigned char nid = GetBlockAt(offset.x, offset.y, offset.z);
 
+						// HACK: Set GetBlockAt to return -1 if there is no loaded chunk, so we can use this to clip the sides
 						if (nid != 0)
 							continue; // Skip sides that are not visible
 
@@ -404,4 +407,151 @@ namespace Block
 		Profile::End();
 	}
 
+	/*
+	This is my attempt at an optimized mesh generation
+	The main idea is to look at only empty spaces, and generate the mesh for any adjacent solid blocks
+	TESTED - This doesn't work, at least in the existing world data, because each chunk is roughly 50-50
+			filled blocks vs empty blocks, which means this does just as much work as the other method
+			IDEA - Use some form of octtree to split up the chunk, scaning to see if a oct is empty, then
+			splitting it up more if its not empty might be faster then the current method
+			To get the most out of this method, it might be better to store the world itself as an octree,
+			this way it is already calculated down to full/empty leaves
+	*/
+	void World::GenerateChunkMesh2(Chunk* chunk, int xOff, int zOff)
+	{
+		Profile::Begin("GenerateChunkMesh");
+		// Vertex information
+		struct Vertex
+		{
+			glm::vec4	position;
+			glm::vec2	texCoord;
+			glm::vec4	normal;
+			glm::vec4	tangent;
+			float		roughness;
+		};
+
+		std::vector<Vertex> vecVertices;
+		std::vector<GLuint> vecIndices;
+		Profile::Begin("Vertex Part");
+		for (int x = 0; x < Chunk::CHUNK_X; x++)
+		{
+			for (int z = 0; z < Chunk::CHUNK_Z; z++)
+			{
+				for (int y = 0; y < Chunk::CHUNK_Y; y++)
+				{
+					int xx = xOff + x;
+					int zz = zOff + z;
+					unsigned char id = GetBlockAt(xx, y, zz);
+
+					if (id != 0)
+						continue; // Skip any opaque blocks
+
+					Profile::Begin("All Sides");
+					for (int side = 0; side < 6; side++)
+					{
+						float dx = xx + vertNormTable[side].x;
+						float dy = y + vertNormTable[side].y;
+						float dz = zz + vertNormTable[side].z;
+						//glm::ivec3 offset = glm::ivec3(xx, y, zz) + vertNormTable[side];
+						int modSide = side + (1 - ((side % 2) * 2)); // This calculates the side of the adjacent block
+
+						unsigned char nid = GetBlockAt(dx, dy, dz);
+
+						if (nid == 0)
+							continue; // Skip any non-opaque blocks, TODO: Alpha mesh pass
+
+						Profile::Begin("Side");
+						// Setup our indices - It is fine to do this before the vertices, since our triangle order doesn't change
+						int vertStartIndex = vecVertices.size();
+						// Triangle 1
+						vecIndices.push_back(vertStartIndex);		vecIndices.push_back(vertStartIndex + 2);	vecIndices.push_back(vertStartIndex + 1);
+						// Triangle 2
+						vecIndices.push_back(vertStartIndex + 1);	vecIndices.push_back(vertStartIndex + 2);	vecIndices.push_back(vertStartIndex + 3);
+
+						// Setup our vertices
+						int texIndex = _atlasDiffuse->GetIndex(BLOCKS[nid]->GetTextureBySide(modSide));
+						glm::vec2 minUV = _atlasDiffuse->MinUV(texIndex);
+						glm::vec2 maxUV = _atlasDiffuse->MaxUV(texIndex);
+						float roughness = ((nid == 3 && modSide == 2) ? 0.35f : 0.8f);
+
+						vecVertices.push_back(Vertex {
+							glm::vec4(dx + vertSideTable[modSide][0].x, dy + vertSideTable[modSide][0].y, dz + vertSideTable[modSide][0].z, 1),		// Position
+							glm::vec2(minUV.x, minUV.y),		// TexCoords
+											  glm::vec4(vertNormTable[modSide].x, vertNormTable[modSide].y, vertNormTable[modSide].z, 0),		// Normal
+											  glm::vec4(vertTangentTable[modSide].x, vertTangentTable[modSide].y, vertTangentTable[modSide].z, vertTangentTable[modSide].w),		// Tangent
+											  roughness
+						});
+						vecVertices.push_back(Vertex {
+							glm::vec4(dx + vertSideTable[modSide][1].x, dy + vertSideTable[modSide][1].y, dz + vertSideTable[modSide][1].z, 1),		// Position
+							glm::vec2(maxUV.x, minUV.y),		// TexCoords
+											  glm::vec4(vertNormTable[modSide].x, vertNormTable[modSide].y, vertNormTable[modSide].z, 0),		// Normal
+											  glm::vec4(vertTangentTable[modSide].x, vertTangentTable[modSide].y, vertTangentTable[modSide].z, vertTangentTable[modSide].w),		// Tangent
+											  roughness
+						});
+						vecVertices.push_back(Vertex {
+							glm::vec4(dx + vertSideTable[modSide][2].x, dy + vertSideTable[modSide][2].y, dz + vertSideTable[modSide][2].z, 1),		// Position
+							glm::vec2(minUV.x, maxUV.y),		// TexCoords
+											  glm::vec4(vertNormTable[modSide].x, vertNormTable[modSide].y, vertNormTable[modSide].z, 0),		// Normal
+											  glm::vec4(vertTangentTable[modSide].x, vertTangentTable[modSide].y, vertTangentTable[modSide].z, vertTangentTable[modSide].w),		// Tangent
+											  roughness
+						});
+						vecVertices.push_back(Vertex {
+							glm::vec4(dx + vertSideTable[modSide][3].x, dy + vertSideTable[modSide][3].y, dz + vertSideTable[modSide][3].z, 1),		// Position
+							glm::vec2(maxUV.x, maxUV.y),		// TexCoords
+											  glm::vec4(vertNormTable[modSide].x, vertNormTable[modSide].y, vertNormTable[modSide].z, 0),		// Normal
+											  glm::vec4(vertTangentTable[modSide].x, vertTangentTable[modSide].y, vertTangentTable[modSide].z, vertTangentTable[modSide].w),		// Tangent
+											  roughness
+						});
+						Profile::End();
+					}
+					Profile::End();
+				}
+			}
+		}
+		Profile::End();
+		Profile::Begin("GL Part");
+
+		// Generate our vertex buffer and index buffer
+		glGenBuffers(1, &chunk->_vbo);
+		glGenBuffers(1, &chunk->_ibo);
+
+		// Generate our vertex array
+		glGenVertexArrays(1, &chunk->_vao);
+
+		// Bind our vertex array
+		glBindVertexArray(chunk->_vao);
+
+
+		// Tell GL that our _vbo is an array buffer(vertex buffer) and bind it to the vertex array
+		glBindBuffer(GL_ARRAY_BUFFER, chunk->_vbo);
+		// Tell GL that our _ibo is an element array buffer(index buffer) and bind it to the vertex array
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->_ibo);
+
+		// Tell GL how big our selected array buffer(_vbo) is, where it is in memory(vertices) and how to handle it
+		glBufferData(GL_ARRAY_BUFFER, vecVertices.size() * sizeof(Vertex), &vecVertices[0], GL_STATIC_DRAW);
+
+		// Tell GL how big our selected element array buffer(_ibo) is, where it is in memory(indices) and how to handle it
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, vecIndices.size() * sizeof(GLuint), &vecIndices[0], GL_STATIC_DRAW);
+
+		// Tell GL the structure of our array buffer(_vbo)
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position)));
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position) + sizeof(Vertex::texCoord)));
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position) + sizeof(Vertex::texCoord) + sizeof(Vertex::normal)));
+		glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(sizeof(Vertex::position) + sizeof(Vertex::texCoord) + sizeof(Vertex::normal) + sizeof(Vertex::tangent)));
+
+		// Unbind our vertex array so that no further attempts to change a vertex array wont affect _vao
+		glBindVertexArray(0);
+
+		chunk->_indexCount = vecIndices.size();
+		Profile::End();
+		Profile::End();
+	}
+
+#pragma endregion
 }

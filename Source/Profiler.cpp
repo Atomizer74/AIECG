@@ -41,6 +41,9 @@ void Profile::End()
 
 std::vector<ProfileInfo> Profile::ProfileData()
 {
+	if (_root == nullptr)
+		return std::vector<ProfileInfo>();
+
 	std::vector<ProfileInfo> profileMap;
 
 	for each (auto node in _root->_children)

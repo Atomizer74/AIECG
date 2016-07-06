@@ -25,6 +25,9 @@ namespace Block
 
 		virtual const char* GetTextureBySide(int side) const { return ""; }
 		virtual int GetTexIDBySide(int side) const { return 0; }
+
+		virtual bool IsFullBlock() const { return false; }
+		virtual bool IsOpaqueBlock() const { return false; }
 	};
 
 	class BlockStone : public Block
@@ -41,6 +44,8 @@ namespace Block
 		{
 			return 0;
 		}
+		virtual bool IsFullBlock() const { return true; }
+		virtual bool IsOpaqueBlock() const { return true; }
 	};
 
 	class BlockDirt : public Block
@@ -57,6 +62,8 @@ namespace Block
 		{
 			return 1;
 		}
+		virtual bool IsFullBlock() const { return true; }
+		virtual bool IsOpaqueBlock() const { return true; }
 	};
 
 	class BlockGrass : public Block
@@ -83,6 +90,8 @@ namespace Block
 
 			return 2;
 		}
+		virtual bool IsFullBlock() const { return true; }
+		virtual bool IsOpaqueBlock() const { return true; }
 	};
 
 	static const Block* BLOCKS[] = {
@@ -97,7 +106,7 @@ namespace Block
 	{
 	public:
 		static const int CHUNK_X = 16;
-		static const int CHUNK_Y = 512;
+		static const int CHUNK_Y = 256;
 		static const int CHUNK_Z = 16;
 
 		unsigned char _blocks[CHUNK_X * CHUNK_Y * CHUNK_Z];
@@ -190,28 +199,25 @@ namespace Block
 			Profile::Begin("Generate Texture Atlases");
 			// TODO: Look into hardware texture arrays
 			// Setup texture atlas
-			_atlasDiffuse = new TextureAtlas(3, 512, glm::ivec4(0x66, 0x66, 0x66, 0xFF));
+			_atlasDiffuse = new TextureAtlas(2, 512, glm::ivec4(0x66, 0x66, 0x66, 0xFF));
 			_atlasDiffuse->AddTex("stone", "textures/blocks/stone.png", 0);
 			_atlasDiffuse->AddTex("dirt", "textures/blocks/dirt.png", 1);
 			_atlasDiffuse->AddTex("grassSide", "textures/blocks/grass_side.png", 2);
 			_atlasDiffuse->AddTex("grassTop", "textures/blocks/grass_top.png", 3);
-			_atlasDiffuse->AddTex("gravel", "textures/blocks/gravel.png", 4);
 			_atlasDiffuse->Upload();
 
-			_atlasNormal = new TextureAtlas(3, 512, glm::ivec4(0x00, 0x00, 0x00, 0x00));
+			_atlasNormal = new TextureAtlas(2, 512, glm::ivec4(0x00, 0x00, 0x00, 0x00));
 			_atlasNormal->AddTex("stone", "textures/blocks/stone_n.png", 0);
 			_atlasNormal->AddTex("dirt", "textures/blocks/dirt_n.png", 1);
 			_atlasNormal->AddTex("grassSide", "textures/blocks/grass_side_n.png", 2);
 			_atlasNormal->AddTex("grassTop", "textures/blocks/grass_top_n.png", 3);
-			_atlasNormal->AddTex("gravel", "textures/blocks/gravel_n.png", 4);
 			_atlasNormal->Upload();
 
-			_atlasSpecular = new TextureAtlas(3, 512, glm::ivec4(0x00, 0x00, 0x00, 0xFF));
+			_atlasSpecular = new TextureAtlas(2, 512, glm::ivec4(0x00, 0x00, 0x00, 0xFF));
 			_atlasSpecular->AddTex("stone", "textures/blocks/stone_s.png", 0);
 			_atlasSpecular->AddTex("dirt", "textures/blocks/dirt_s.png", 1);
 			_atlasSpecular->AddTex("grassSide", "textures/blocks/grass_side_s.png", 2);
 			_atlasSpecular->AddTex("grassTop", "textures/blocks/grass_top_s.png", 3);
-			_atlasSpecular->AddTex("gravel", "textures/blocks/gravel_s.png", 4);
 			_atlasSpecular->Upload();
 			Profile::End();
 		}
@@ -293,8 +299,9 @@ namespace Block
 			int chunkZ = (int)floorf(z / (float)Chunk::CHUNK_Z);
 
 			if (_chunkMap.count(chunkX) == 0 || _chunkMap[chunkX].count(chunkZ) == 0)
-				return 0; // TODO: Generate/Load chunk if it isn't in the map, for now we just return air
+				return -1; // TODO: Generate/Load chunk if it isn't in the map, for now we just return air
 						  // (NOTE: Also need to make sure we don't try to generate a chunk we are currently generating)
+							// HACK: Changed this to return -1, this will clip the sides where no chunks are loaded
 
 			Chunk* currentChunk = _chunkMap[chunkX][chunkZ];
 
@@ -337,6 +344,7 @@ namespace Block
 		// TODO: This should go somewhere else, only within the renderer(client)
 		void GenerateMeshes();
 		void GenerateChunkMesh(Chunk* chunk, int xOff, int zOff);
+		void GenerateChunkMesh2(Chunk* chunk, int xOff, int zOff);
 	};
 
 
